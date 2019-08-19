@@ -1,0 +1,33 @@
+@font-face{
+    src: url('../font/Oswald-Bold.ttf');
+    font-family: 'oswald';
+}
+
+@font-face{
+    src: url('../font/Cabin-Medium.ttf');
+    font-family: 'cabin';
+}
+
+$cards:(
+    card-bg-color: rgba(12, 12, 12, 0.6),
+    cards-bg-color: rgb(9, 20, 47),
+    actual-bg-color: rgb(51, 86, 182),
+    second-bg-color: rgb(40, 60, 114),
+    third-bg-color: rgb(26, 44, 93)
+);
+
+@mixin title(){
+    font-size: 30px;
+    font-family: "oswald";
+    margin: 5px 0 25px;
+}
+
+@mixin subTitle(){
+    font-size: 18px;
+    font-family: 'cabin';
+}
+
+@mixin icon(){
+    font-size: 115px;
+    color: #FFF;
+}
