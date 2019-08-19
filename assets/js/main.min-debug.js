@@ -3,7 +3,8 @@
     const MOBILE_SCREEN = 750;
     const $cards = () => $.querySelectorAll('.cards__content__card');
     let _totalCards = undefined;
-
+    let _loopCards = undefined;
+    
     const isDesktop = () => getWidthScreen() > DESKTOP_SCREEN;
     
     const addClass = function(className){
@@ -108,9 +109,18 @@
         showOnlyTotalCards();
         setActualStyle();
     }
+
+    const clearAndMove = (callback, event = null) => {
+        clearInterval(_loopCards)
+        setTimeout(setLoopCards, 3000);
+        callback(event);
+    }
+
     const setListeners = () => {
-        window.addEventListener('resize', reset ,false);
-        setListener($cards(), 'click', cardClicked);
+        window.addEventListener('resize', () => clearAndMove(reset) ,false);
+        setListener($cards(), 'click', (event) => clearAndMove(cardClicked, event));
+        $.querySelector('#prev').addEventListener('click', () => clearAndMove(prevCard), false);
+        $.querySelector('#next').addEventListener('click', () => clearAndMove(nextCard), false);
     }
 
     const nextCard = () => {
@@ -123,7 +133,7 @@
         selectCard($card);
     }
     const setLoopCards = () => {
-        setInterval(nextCard, 3000);
+        _loopCards = setInterval(nextCard, 3000);
     }
 
     const start = () => {
