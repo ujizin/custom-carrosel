@@ -1,9 +1,10 @@
 (function($){
+    const $cards = () => $.querySelectorAll('.cards__content__card');
     const DESKTOP_SCREEN = 1100;
     const MOBILE_SCREEN = 750;
-    const $cards = () => $.querySelectorAll('.cards__content__card');
     let _totalCards = undefined;
     let _loopCards = undefined;
+    let _resetTimer = undefined;
     
     const isDesktop = () => getWidthScreen() > DESKTOP_SCREEN;
     
@@ -112,7 +113,8 @@
 
     const clearAndMove = (callback, event = null) => {
         clearInterval(_loopCards)
-        setTimeout(setLoopCards, 3000);
+        clearTimeout(_resetTimer)
+        _resetTimer = setTimeout(setLoopCards, 3000);
         callback(event);
     }
 

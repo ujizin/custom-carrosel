@@ -7,6 +7,7 @@ const plumber = require('gulp-plumber');
 const browserSync = require('browser-sync').create()
 const deporder = require('gulp-deporder');
 const minify = require('gulp-minify');
+const babel = require('gulp-babel');
 
 const path = "./assets";
 
@@ -43,6 +44,4 @@ gulp.task('serve', ['css', 'js'], () => {
     gulp.watch(`${path}/*.html`).on('change', browserSync.reload);
 });
 
-gulp.task('default', ['serve']);
-
-
+gulp.task('default', ['serve'])
