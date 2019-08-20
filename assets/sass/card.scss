@@ -34,10 +34,14 @@
         align-items: center;
 
         &__card{
+            width: 150px;
             transition: 0.3s all;
             background-color: map-get($cards, cards-bg-color);
             padding: 15px 5px;
 
+            & *{
+                transition: 0.1s all;
+            }
             &:hover{
                 transform: scale(1.025)
             }
@@ -87,5 +91,11 @@
 }
 
 .card-none{
-    display: none;
+    width: 0;
+    visibility: hidden;
+    position: relative;
+    
+    & *{
+        opacity: 0;
+    }
 }

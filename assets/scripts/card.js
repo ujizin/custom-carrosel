@@ -30,8 +30,10 @@
 
     const insertCard = (where, $cards, $actual) => {
         Array.prototype.forEach.call($cards, $el => {
-            $el.classList.remove('card-none');
             $actual.insertAdjacentElement(where, $el);
+            setTimeout(() => {
+                $el.classList.remove('card-none');
+            }, 1);
         })
         return Array.prototype.slice.call($cards, -1)[0];
     }
@@ -142,7 +144,7 @@
         setListeners();
         setTotalCards();
         setInitStyles();
-        setLoopCards();
+        // setLoopCards();
     }
 
     const resetClasses = () => {
