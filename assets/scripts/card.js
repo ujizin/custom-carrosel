@@ -2,10 +2,15 @@
     const $cards = () => $.querySelectorAll('.cards__content__card');
     const DESKTOP_SCREEN = 1100;
     const MOBILE_SCREEN = 750;
-    let _totalCards = undefined;
-    let _loopCards = undefined;
-    let _resetTimer = undefined;
-    
+    let _totalCards;
+    let _loopCards;
+    let _resetTimer;
+    let _reset;
+
+    const _onMouseDown = (event) => {
+        clearAndMove(onMoveDrag, event);
+    }
+
     const isDesktop = () => getWidthScreen() > DESKTOP_SCREEN;
     
     const addClass = function(className){
@@ -33,7 +38,7 @@
             $actual.insertAdjacentElement(where, $el);
             setTimeout(() => {
                 $el.classList.remove('card-none');
-            }, 0.1);
+            }, 10);
         })
         return Array.prototype.slice.call($cards, -1)[0];
     }
@@ -104,9 +109,17 @@
         });
     }
 
+    const removeListener = ($elements, event, callback) => {
+        Array.prototype.forEach.call($elements, el =>{
+            el.removeEventListener(event, callback);
+        })
+    }
+
     const cardClicked = (event) => {
-        const $card = event.currentTarget;
-        selectCard($card);
+        clearAndMove(()=> {
+            const $card = event.currentTarget;
+            selectCard($card);
+        })
     }
 
     const selectCard = ($card) => {
@@ -155,22 +168,29 @@
     }
     const setListeners = () => {
         window.addEventListener('resize', () => clearAndMove(reset) ,false);
-        setListener($cards(), 'click', (event) => clearAndMove(cardClicked, event));
-        $.querySelector('#prev').addEventListener('click', () => clearAndMove(prevCard), false);
-        $.querySelector('#next').addEventListener('click', () => clearAndMove(nextCard), false);
-
-        $.querySelector('#contentCard').addEventListener('mousedown', (event) => clearAndMove(onMoveDrag, event), false);
+        setListener($cards(), 'click', cardClicked);
+        $.querySelector('#prev').addEventListener('click', prevCard, false);
+        $.querySelector('#next').addEventListener('click', nextCard, false);
+        $.querySelector('#contentCard').addEventListener('mousedown', _onMouseDown, false);
     }
 
-    const nextCard = (event, index = 1) => {
-        if(index <= 0 ) return;
-        const $card = $cards()[getActualIndex() + index] || $cards()[-1 + index];
-        selectCard($card);
+    const removeListeners = () => {
+        removeListener($cards(), 'click', cardClicked);
+        $.querySelector('#contentCard').removeEventListener('mousedown', _onMouseDown);
+
+    }
+    const nextCard = () => {
+        clearAndMove(() => {
+            const $card = $cards()[getActualIndex() + 1] || $cards();
+            selectCard($card);
+        })
     }
     
     const prevCard = () => {
-        const $card = $cards()[getActualIndex() + -1] || Array.prototype.slice.call($cards(), -1);
-        selectCard($card);
+        clearAndMove(() =>{
+            const $card = $cards()[getActualIndex() + -1] || Array.prototype.slice.call($cards(), -1);
+            selectCard($card);
+        })
     }
     const setLoopCards = () => {
         _loopCards = setInterval(nextCard, 3000);
@@ -193,7 +213,9 @@
     }
     const reset = () => {
         resetClasses()
-        start();
+        removeListeners();
+        clearTimeout(_reset);
+        _reset = setTimeout(start, 2500);
     }
     start();
     
