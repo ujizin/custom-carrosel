@@ -33,21 +33,24 @@
             $actual.insertAdjacentElement(where, $el);
             setTimeout(() => {
                 $el.classList.remove('card-none');
-            }, 1);
+            }, 0.1);
         })
         return Array.prototype.slice.call($cards, -1)[0];
     }
 
     const addSiblingsClasses = $actual => {
+        // first card
         const $prev = $actual.previousElementSibling || getPreviousCard($actual);
         const $next = $actual.nextElementSibling || getNextCard($actual);
 
         addClass('cards-second', $prev, $next);
         
         if(isDesktop()){
+            // second card
             const $prevPrev = $prev.previousElementSibling || getPreviousCard($prev);
             const $nextNext = $next.nextElementSibling || getNextCard($next);
 
+            // third card
             if(!$prevPrev.previousElementSibling) getPreviousCard($prevPrev);
             if(!$nextNext.nextElementSibling) getNextCard($nextNext, 1)
             
@@ -120,15 +123,48 @@
         callback(event);
     }
 
+    const onMoveDrag = (event) => {
+        event.preventDefault();
+        const onMouseMove = (event) => {
+            newLeft = event.clientX - shiftX - $content.getBoundingClientRect().left;
+            const moveWith = Math.floor( newLeft / 300 );
+            const absoluteMoveWith = Math.abs(moveWith);
+            const isPositiveNumber = moveWith >= 0 || false;
+
+            if (absoluteMoveWith > numberPassed){
+                numberPassed = absoluteMoveWith;
+                if(isPositiveNumber)
+                    prevCard();
+                else 
+                    nextCard()
+            }
+        }
+
+        function onMouseUp() {
+            $.removeEventListener('mousemove', onMouseMove);
+            $.removeEventListener('mouseup', onMouseUp);
+        }
+       
+        let numberPassed = 0;
+        let newLeft;
+        const $content = event.currentTarget;
+        let shiftX = event.clientX - $content.getBoundingClientRect().left;
+
+        $.addEventListener('mousemove', onMouseMove);
+        $.addEventListener('mouseup', onMouseUp);
+    }
     const setListeners = () => {
         window.addEventListener('resize', () => clearAndMove(reset) ,false);
         setListener($cards(), 'click', (event) => clearAndMove(cardClicked, event));
         $.querySelector('#prev').addEventListener('click', () => clearAndMove(prevCard), false);
         $.querySelector('#next').addEventListener('click', () => clearAndMove(nextCard), false);
+
+        $.querySelector('#contentCard').addEventListener('mousedown', (event) => clearAndMove(onMoveDrag, event), false);
     }
 
-    const nextCard = () => {
-        const $card = $cards()[getActualIndex() + 1] || $cards()[0];
+    const nextCard = (event, index = 1) => {
+        if(index <= 0 ) return;
+        const $card = $cards()[getActualIndex() + index] || $cards()[-1 + index];
         selectCard($card);
     }
     
